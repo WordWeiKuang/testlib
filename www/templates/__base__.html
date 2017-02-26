@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    {% block meta %}<!-- block meta  -->{% endblock %}
+    <title>{% block title %} ? {% endblock %}   inno-cobot  </title>
+
+        <link rel="stylesheet" href="styles/bootstrap.min.css">
+        <link rel="stylesheet" href="styles/font-awesome.css">
+        <link rel="stylesheet" href="styles/style.css">
+
+        <link href="font-awesome-4.2.0/css/font-awesome.min.css"  rel="stylesheet">
+        <link href="scripts/alertify-css/alertify.min.css"  rel="stylesheet">
+        <link href="scripts/alertify-css/themes/default.min.css"  rel="stylesheet">
+
+
+        <script  src="scripts/jquery-1.8.3.min.js"></script>
+        <script  src="scripts/jquery-spin.js"></script>
+        <script src="scripts/jquery-ui.js"></script>
+        <script src="scripts/sockjs-0.3.4.min.js"></script>
+        <script src="scripts/multiplex.js"></script>
+        <script src="scripts/alertify.min.js"></script>
+
+        <script src="ace_src/ace.js" type="text/javascript" charset="utf-8"></script>
+
+        <script src="scripts/three/three.min.js"></script>
+        <script src="scripts/three/Detector.js"></script>
+        <script src="scripts/three/controls/OrbitControls.js"></script>
+
+        <script src="scripts/three/fpscene.js"></script>
+
+        <script src="config.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var static_url = '{{ static_url("") }}';
+        </script>
+        <script src="scripts/filesystem.js" type="text/javascript" charset="utf-8"></script>
+        <script src="scripts/myp-2.js" type="text/javascript" charset="utf-8"></script>
+
+    {% block beforehead %}<!-- before head  -->{% endblock %}
+</head>
+<body>
+
+            {#<div class="col-md-2 sidebar" id="sidebar">
+    	<div class="">
+			<!-- begin sidebar scrollbar -->
+			<div class="slimScrollDiv">
+				<!-- begin sidebar user -->
+				<ul class="nav">
+					<li class="nav-profile">
+						<div class="image">
+							<a><img alt="" src="img/logo.png"></a>
+						</div>
+						<div class="info">
+							华创机器人
+							<small>HUA CHUANG ROBOTICS</small>
+						</div>
+
+						<button type="button"  class="btn-default btn" onclick=back_connection()>Connection</button>
+					</li>
+				</ul>
+				<!-- end sidebar user -->
+				<!-- begin sidebar nav -->
+				<ul class="nav">
+					<li class="has-sub active">
+						<a>
+						    <i class="fa fa-home"></i>
+						    <span>Home</span>
+					    </a>
+					</li>
+					<li class="has-sub active">
+						<a>
+						    <i class="fa fa-files-o"></i>
+						    <span>Teach-in</span>
+					    </a>
+					</li>
+					<li class="has-sub active">
+						<a>
+						    <i class="fa fa-suitcase"></i>
+						    <span>Task Assistant</span>
+					    </a>
+					</li>
+					<li class="has-sub active">
+						<a>
+						    <i class="fa fa-cloud"></i>
+						    <span>Application</span>
+					    </a>
+					</li>
+					<li class="has-sub active">
+						<a>
+						    <i class="fa fa-check-square-o"></i>
+						    <span>project manager</span>
+					    </a>
+					</li>
+
+				</ul>
+				<!-- end sidebar nav -->
+			</div></div>
+			<!-- end sidebar scrollbar -->
+		</div>#}
+
+            <!-- content -->
+            {% block content %}
+            {% endblock %}
+            <!-- // content -->
+</body>
+</html>
