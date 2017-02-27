@@ -6,7 +6,7 @@ __author__ = 'Michael Liao'
 ' url handlers '
 
 import re, time, json, logging, hashlib, base64, asyncio, os
-
+from random import choice
 import markdown2
 
 from aiohttp import web
@@ -85,6 +85,12 @@ def index():
     }
 
 @get('/infos')
+def base_html():
+    return {
+        '__template__': 'infos.html'
+    }
+
+@get('/infos')
 def infos():
     return{
         '__template__':'infos.html'
@@ -129,3 +135,15 @@ def api_create_info(request, *, name, summary, content):
 def api_update_blog():
     pass
 
+@get('/game/{flag}')
+def game_finger_guess(flag):
+    flag_list = ['rock','paper','scissors']
+    retun_flag = choice(flag_list)
+    if(flag != 'rock' and flag != 'paper' and flag != 'scissors'):
+        return dict(flag=retun_flag, ps='不要乱搞')
+    if(flag==retun_flag):
+        return dict(flag = retun_flag, ps = '握手言和')
+    if(flag=='paper'and retun_flag=='scissors' or flag=='rock'and retun_flag=='paper' or flag=='scissors'and retun_flag=='rock'):
+        return dict(flag = retun_flag, ps = '你输了')
+    if(flag=='paper'and retun_flag=='rock' or flag=='rock'and retun_flag=='scissors' or flag=='scissors'and retun_flag=='paper'):
+        return dict(flag=retun_flag, ps = '你赢了')
