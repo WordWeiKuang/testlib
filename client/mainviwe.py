@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
         # 设置窗口标题
         self.setWindowTitle('专题测试')
         self.setGeometry(100,100,1000,700)
-        self.setWindowIcon(QIcon('./test/icons/penguin.png'))
+        self.setWindowIcon(QIcon('./icons/logo_32.png'))
         # 设置布局
         main_window_layout = QHBoxLayout()
         # 添加按钮动作，并加载图标图像
@@ -48,6 +48,30 @@ class MainWindow(QMainWindow):
         build_system_menu.addAction(button_action2)
         build_system_menu.addSeparator()
         build_system_menu.addAction(button_action3)
+
+        # 添加导航栏
+        navigation_bar = QToolBar('Navigation')
+        # 设定图标的大小
+        navigation_bar.setIconSize(QSize(32, 32))
+        self.addToolBar(navigation_bar)
+
+        # 添加前进、后退、停止加载和刷新的按钮
+        back_button = QAction(QIcon('./icons/file_32.png'), 'text', self)
+        next_button = QAction(QIcon('./icons/item_32.png'), 'text', self)
+        stop_button = QAction(QIcon('./icons/star_32.png'), 'text', self)
+        reload_button = QAction(QIcon('./icons/push_32.png'), 'text', self)
+
+        # 信号槽
+        #back_button.triggered.connect()
+        #next_button.triggered.connect()
+        #stop_button.triggered.connect()
+        #reload_button.triggered.connect()
+
+        # 将按钮添加到导航栏上
+        navigation_bar.addAction(back_button)
+        navigation_bar.addAction(next_button)
+        navigation_bar.addAction(stop_button)
+        navigation_bar.addAction(reload_button)
 
         cata_list = Catalog()
         item_list = ItemView()

@@ -11,6 +11,7 @@ class User(Model):
     passwd = TextField()
     email = TextField()
     image = TextField(null=True)
+    code = TextField()
     ctime = DoubleField(default=time.time)
 
 class Paper(Model):

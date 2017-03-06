@@ -15,10 +15,10 @@ class ItemBox(QWidget):
 class ItemView(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-        mygroupbox = QGroupBox('试题列表')
+        mygroupbox = QGroupBox('题目列表')
         myform = QFormLayout()
         boxlist = []
-        items = Item.select().order_by(Item.index).paginate(0, 100)
+        items = Item.select().where(Item.paper=='test1').order_by(Item.index).paginate(0, 100)
         for i in range(len(items)):
             item = items[i]
             boxlist.append(ItemBox(item))

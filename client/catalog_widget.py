@@ -1,70 +1,41 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-
-data = [
-   ("Alice", [
-       ("Keys", []),
-       ("Purse", [
-           ("Cellphone", [])
-           ])
-       ]),
-   ("Bob", [
-       ("Wallet", [
-           ("Credit card", []),
-           ("Money", [])
-           ]),
-       ("test",[])
-       ])
-   ]
+from model import Paper
 
 class Catalog(QWidget):
-
     def __init__(self):
         QWidget.__init__(self)
 
-        self.treeView = QTreeView()
-        self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.treeView.customContextMenuRequested.connect(self.openMenu)
+        formbox = QFormLayout()
+        mygroupbox = QGroupBox('试卷列表')
+        imgs = []
+        names = []
+        papers = Paper.select().paginate(0,50)
+        for i in range(len(papers)):
+            paper = papers[i]
+            imglabel = QLabel('')
+            imglabel.setPixmap(QPixmap('./icons/file.png'))
+            imgs.append(imglabel)
+            Tlabel = QLabel(paper.name)
+            names.append(Tlabel)
+            formbox.addRow(imgs[i], names[i])
+            mygroupbox.setLayout(formbox)
+        scroll = QScrollArea()
+        scroll.setWidget(mygroupbox)
+        scroll.setWidgetResizable(True)
+        layout = QVBoxLayout(self)
+        layout.addWidget(scroll)
+        '''
+        for i in range(len(papers)):
+            paper = papers[i]
+            label = QLabel()
+            pl = QAction(QIcon('./icons/file_32.png'), paper.name)
+            label.addAction(pl)
+            print(paper.name)
+            layout.addWidget(label)
+        '''
 
-        self.model = QStandardItemModel()
-        self.addItems(self.model, data)
-        # self.model.appendRow(QStandardItem("test"))
-        # self.model.appendRow(QStandardItem("test1"))
-        self.treeView.setModel(self.model)
 
-        self.model.setHorizontalHeaderLabels([self.tr("目录")])
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.treeView)
         self.setLayout(layout)
         self.setFixedWidth(200)
-
-    def addItems(self, parent, elements):
-
-        for text, children in elements:
-            item = QStandardItem(text)
-            parent.appendRow(item)
-            if children:
-                self.addItems(item, children)
-
-    def openMenu(self, position):
-
-        indexes = self.treeView.selectedIndexes()
-        if len(indexes) > 0:
-
-            level = 0
-            index = indexes[0]
-            while index.parent().isValid():
-                index = index.parent()
-                level += 1
-
-        menu = QMenu()
-        if level == 0:
-            menu.addAction(self.tr("Edit person"))
-        elif level == 1:
-            menu.addAction(self.tr("Edit object/container"))
-        elif level == 2:
-            menu.addAction(self.tr("Edit object"))
-
-        menu.exec_(self.treeView.viewport().mapToGlobal(position))
