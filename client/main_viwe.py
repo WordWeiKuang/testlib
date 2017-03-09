@@ -11,7 +11,7 @@ from peewee import *
 
 import sys
 
-from model import Paper
+from model import Paper, Item
 from catalog_widget import Catalog
 from item_widget import ItemView
 
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         self.addToolBar(navigation_bar)
 
         # 添加前进、后退、停止加载和刷新的按钮
-        back_button = QAction(QIcon('./icons/file_32.png'), 'text', self)
+        back_button = QAction(QIcon('./icons/file_1_32.png'), 'text', self)
         next_button = QAction(QIcon('./icons/item_32.png'), 'text', self)
         stop_button = QAction(QIcon('./icons/star_32.png'), 'text', self)
         reload_button = QAction(QIcon('./icons/push_32.png'), 'text', self)
@@ -73,8 +73,11 @@ class MainWindow(QMainWindow):
         navigation_bar.addAction(stop_button)
         navigation_bar.addAction(reload_button)
 
-        cata_list = Catalog()
+        # 初始化题目(item) 传入一个paper
+        paper =Paper.select().paginate(0,1)
+
         item_list = ItemView()
+        cata_list = Catalog(item_list)
 
         #添加到主视图布局
         main_window_layout.addWidget(cata_list)

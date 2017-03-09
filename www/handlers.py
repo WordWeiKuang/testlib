@@ -147,3 +147,4 @@ def game_finger_guess(flag):
         return dict(flag=retun_flag, ps = '你赢了')
     if(flag != 'rock' and flag != 'paper' and flag != 'scissors'):
         return dict(flag=retun_flag, ps='不要乱搞')
+
