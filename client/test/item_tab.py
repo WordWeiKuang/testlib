@@ -1,15 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QHBoxLayout, QListWidget, QListWidgetItem
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from model import Item
 
 class MyTextEdit(QWidget):
     def __init__(self, item):
         QWidget.__init__(self)
         self.textbox = QTextEdit()
-        s = '(%s) %s \n\n   %s' % (str(item.index), item.content, item.answer_list)
-        self.textbox.setText(s)
+        #s = '(%s) %s \n\n   %s' % (str(item.index), item.content, item.answer_list)
+        self.textbox.setText(item.content)
         self.textbox.setStyleSheet("border: 0px;background-color: rgb(255, 255, 255, 60);")
         #self.textbox.setWordWrap(True)
         #self.textbox
@@ -20,9 +20,7 @@ class MyTextEdit(QWidget):
         layout.addWidget(self.textbox)
 
 class ItemView(QWidget):
-
     def __init__(self, items=None):
-
         QWidget.__init__(self)
 
         self.items = items
@@ -47,4 +45,8 @@ class ItemView(QWidget):
             self.listWidget.setItemWidget(widgetItem, textEdit)
 
     def clicked(self, widgetItem):
-        print()
+        pass
+
+class Item_Tab_View(QWidget):
+    def __init__(self):
+        QWidget.__init__(self)

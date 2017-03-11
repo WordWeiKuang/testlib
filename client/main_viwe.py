@@ -4,9 +4,9 @@
 TODO：从sqlit导入数据，编写orm，建立数据模型
 
 '''
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QAction, QToolBar, QWidget, QApplication
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon
 from peewee import *
 
 import sys

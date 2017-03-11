@@ -1,4 +1,4 @@
-from peewee import *
+from peewee import Model, TextField, DoubleField, IntegerField
 
 import time, uuid
 
