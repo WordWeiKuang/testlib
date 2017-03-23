@@ -1,20 +1,27 @@
-from peewee import Model, TextField, DoubleField, IntegerField
+from peewee import SqliteDatabase, Model, TextField, DoubleField, IntegerField
 
 import time, uuid
 
 def next_id():
     return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
 
-class User(Model):
+db = SqliteDatabase('./peewee.db')
+
+class BaseModel(Model):
+    class Meta:
+        database = db
+
+class User(BaseModel):
     id = TextField(primary_key=True,default=next_id)
     name = TextField()
-    passwd = TextField()
     email = TextField()
     image = TextField(null=True)
     code = TextField()
+    setting = TextField()
+    tag = TextField()
     ctime = DoubleField(default=time.time)
 
-class Paper(Model):
+class Paper(BaseModel):
     id = TextField(primary_key=True,default=next_id)
     name = TextField()
     tag = TextField(null=True)
@@ -22,7 +29,7 @@ class Paper(Model):
     total = IntegerField(null=True)
     ctime = DoubleField(default=time.time)
 
-class Item(Model):
+class Item(BaseModel):
     id = TextField(primary_key=True,default=next_id)
     index = IntegerField()
     content = TextField()
@@ -32,22 +39,4 @@ class Item(Model):
     score = IntegerField(null=True)
     paper = TextField()
     ctime = DoubleField(default=time.time)
-
-'''
-db = SqliteDatabase('data.db')
-db.connect()
-db.create_tables([User,Paper,Item])
-
-user = User.create(name='charlie', passwd='1111', email='1111@test.com')
-user.save()
-
-paper = Paper.create(name='电工测试题',tag='深圳技师学院特种测试题',munber=100,total = 100)
-paper.save()
-
-item = Item.create(index=1,content='将一根导线均匀拉长为原长的2倍，则它的阻值为原阻值的(   )倍。',
-                   answer_list='A.1    B．2    C．4',answer_type='choice',answer='c',score=1,
-                   paper='')
-item.save()
-
-'''
 

@@ -7,7 +7,6 @@ TODO：从sqlit导入数据，编写orm，建立数据模型
 from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QAction, QToolBar, QWidget, QApplication
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
-from peewee import *
 
 import sys
 
@@ -23,6 +22,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('专题测试')
         self.setGeometry(100,100,1000,700)
         self.setWindowIcon(QIcon('./icons/logo_32.png'))
+
         # 设置布局
         main_window_layout = QHBoxLayout()
         # 添加按钮动作，并加载图标图像
@@ -56,32 +56,32 @@ class MainWindow(QMainWindow):
         self.addToolBar(navigation_bar)
 
         # 添加前进、后退、停止加载和刷新的按钮
-        back_button = QAction(QIcon('./icons/file_1_32.png'), 'text', self)
-        next_button = QAction(QIcon('./icons/item_32.png'), 'text', self)
-        stop_button = QAction(QIcon('./icons/star_32.png'), 'text', self)
-        reload_button = QAction(QIcon('./icons/push_32.png'), 'text', self)
+        all_butoon = QAction(QIcon('./icons/file_1_32.png'), '所有试卷', self)
+        done_button = QAction(QIcon('./icons/item_32.png'), '已完成', self)
+        star_button = QAction(QIcon('./icons/star_32.png'), '收藏', self)
+        push_button = QAction(QIcon('./icons/push_32.png'), '提交', self)
+
+        self.item_list = ItemView()
+        self.cata_list = Catalog(self.item_list)
 
         # 信号槽
-        #back_button.triggered.connect()
-        #next_button.triggered.connect()
-        #stop_button.triggered.connect()
-        #reload_button.triggered.connect()
+        all_butoon.triggered.connect(self.cata_list.showall)
+        done_button.triggered.connect(self.cata_list.done)
+        star_button.triggered.connect(self.cata_list.star)
+        #push_button.triggered.connect()
 
         # 将按钮添加到导航栏上
-        navigation_bar.addAction(back_button)
-        navigation_bar.addAction(next_button)
-        navigation_bar.addAction(stop_button)
-        navigation_bar.addAction(reload_button)
+        navigation_bar.addAction(all_butoon)
+        navigation_bar.addAction(done_button)
+        navigation_bar.addAction(star_button)
+        navigation_bar.addAction(push_button)
 
         # 初始化题目(item) 传入一个paper
-        paper =Paper.select().paginate(0,1)
-
-        item_list = ItemView()
-        cata_list = Catalog(item_list)
+        #paper =Paper.select().paginate(0,1)
 
         #添加到主视图布局
-        main_window_layout.addWidget(cata_list)
-        main_window_layout.addWidget(item_list)
+        main_window_layout.addWidget(self.cata_list)
+        main_window_layout.addWidget(self.item_list)
 
         #在主视图中设置中心组件
         widget = QWidget()
