@@ -1,13 +1,36 @@
 # -*- coding: utf-8 -*-
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtWebEngineWidgets import *
 import sys
 import os
 import logging
 import threading
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
+logger = logging.getLogger(__name__)
+
+try:
+    from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView
+    logger.debug("Using QtWebEngineWidgets")
+except ImportError as e:
+    logger.warn("import webEngineWidgets error")
+    _import_error = True
+else:
+    _import_error = False
+
+if _import_error:
+    try:
+        from PyQt5.QtWebKitWidgets import QWebView
+        logger.debug("Using QWebView")
+    except ImportError as e:
+        logger.warn("import QWebView error")
+        _import_error = True
+    else:
+        _import_error = False
+
+
+if _import_error:
+    raise Exception("This module requires PyQt4 or PyQt5 to work under your system.")
 
 class BrowserView(QMainWindow):
     instance = None
@@ -34,7 +57,8 @@ class BrowserView(QMainWindow):
 
         self.setMinimumSize(min_size[0], min_size[1])
 
-        self.view = QWebEngineView(self)
+        #self.view = QWebView(self)
+        self.view = QWebView(self)
         self.view.setContextMenuPolicy(Qt.NoContextMenu)  # disable right click context menu
 
         if url is not None:

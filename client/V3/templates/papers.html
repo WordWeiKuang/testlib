@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+<style>
+    .mdl-grid{
+        max-width: 1000px;
+        min-width: 800px;
+    }
+    .mdl-card__media > img {
+	    max-width: 100%;
+    }
+    .mdl-card__media{
+        float: left;
+        width:280px;
+        margin-right: 20px;
+    }
+    .mdl-grid > mdl-card__title{
+        float: left;
+        max-width: 50%;
+    }
+    .mdl-grid > mdl-card__subtitle-text{
+        float: left;
+        max-width: 80%;
+    }
+
+</style>
+
+
+<script>
+    function initVM(data) {
+        var vm = new Vue({
+            el: '#vm',
+            data: {
+                tags: data.tags
+            }
+        });
+    }
+    $(function() {
+        getJSON('/api/papers', {
+            //page: {{ page_index }}
+        }, function (err, results) {
+            if (err) {
+                return fatal(err);
+            }
+            //$('#loading').hide();
+            initVM(results);
+        });
+    });
+
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col ">
+      <div class="mdl-card__media">
+        <img src="http://tfirdaus.github.io/mdl/images/laptop.jpg">
+      </div>
+      <div class="mdl-card__title">
+        <h2 class="mdl-card__title-text">title Text Goes Here</h2>
+      </div>
+      <div class="mdl-card__subtitle-text">
+        This text might describe the photo and provide further information, such as where and
+        when it was taken.
+          This text might describe the photo and provide further information, such as where and
+        when it was taken.
+          This text might describe the photo and provide further information, such as where and
+        when it was taken.
+      </div>
+    </div>
+
+    <table class="mdl-data-table mdl-cell--12-col mdl-js-data-table mdl-shadow--2dp" id="vm">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">试卷名称</th>
+          <th>题数</th>
+          <th>总分</th>
+          <th>时间/min</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mdl-data-table__cell--non-numeric">Acrylic (Transparent)</td>
+          <td>100</td>
+          <td>100</td>
+          <td>60</td>
+        </tr>
+        <tr>
+          <td class="mdl-data-table__cell--non-numeric">Plywood (Birch)</td>
+          <td>100</td>
+          <td>100</td>
+          <td>60</td>
+        </tr>
+        <tr>
+          <td class="mdl-data-table__cell--non-numeric">Laminate (Gold on Blue)</td>
+          <td>100</td>
+          <td>100</td>
+          <td>60</td>
+        </tr>
+      </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

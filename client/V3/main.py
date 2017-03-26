@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from threading import Thread, Lock
 import logging
-import webview
 import qt
 from time import sleep
 from server import run_server
@@ -40,5 +38,5 @@ if __name__ == '__main__':
         sleep(0.1)
 
     logger.debug("Server started")
-    qt.create_window("考试系统", "http://127.0.0.1:23948", min_size=(640, 480))
+    qt.create_window("学习系统", "http://127.0.0.1:23948", min_size=(640, 480))
 

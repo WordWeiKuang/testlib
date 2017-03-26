@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, url_for, render_template, jsonify, request, make_response
-from model import User, Paper, Item
+from model import User, Paper, Item, Tag
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1  # disable caching
@@ -13,11 +13,22 @@ def add_header(response):
 
 @app.route("/")
 def landing():
-    return render_template("index.html")
+    return render_template("papers.html")
 
 @app.route("/item")
 def item():
     return render_template("item.html")
+
+@app.route("/index")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/api/tags")
+def get_tags():
+    tags = Tag.select().dicts()
+    response = {'tags': list(tags)}
+    return jsonify(response)
 
 @app.route("/api/papers")
 def get_papers():

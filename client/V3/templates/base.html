@@ -7,14 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Title</title>
     <link rel="stylesheet" href="/static/css/material.css">
-    <link rel="stylesheet" href="/static/css/style.css">
+
     <script src="/static/js/material.min.js"></script>
     <link rel="stylesheet" href="/static/iconfont/material-icons.css">
-
-    <script src="/static/js/axios.min.js"></script>
-    <script src="/static/js/vue.js"></script>
     <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    <script src="/static/js/vue.js"></script>
+
     {% block beforehead %}<!-- before head  -->{% endblock %}
+
+    <script>
+        function initVM(data) {
+            var vm = new Vue({
+                el: '#vm',
+                data: {
+                    tags: data.tags
+                }
+            });
+        }
+        $(function() {
+            getJSON('/api/tags', {
+                //page: {{ page_index }}
+            }, function (err, results) {
+                if (err) {
+                    return fatal(err);
+                }
+                //$('#loading').hide();
+                initVM(results);
+            });
+        });
+
+
+
+    </script>
 </head>
 
 <body class="components">
@@ -37,13 +62,10 @@
       </div>
     </div>
   </header>
-  <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">考试系统</span>
-    <nav class="mdl-navigation">
-      <a class="mdl-navigation__link" href="/item">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
+  <div class="mdl-layout__drawer" id="vm">
+    <span class="mdl-layout-title">菜单</span>
+    <nav class="mdl-navigation" v-for="tag in tags">
+      <a class="mdl-navigation__link" href=""><span v-text="tag.name"></span></a>
     </nav>
   </div>
   <main class="mdl-layout__content">
