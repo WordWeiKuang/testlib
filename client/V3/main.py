@@ -38,5 +38,6 @@ if __name__ == '__main__':
         sleep(0.1)
 
     logger.debug("Server started")
-    qt.create_window("学习系统", "http://127.0.0.1:23948", min_size=(640, 480))
+    qt.create_window("学习系统", "http://127.0.0.1:23948", width=1150, height=680,
+                     icon='./static/img/logo_32.png', min_size=(800, 600))
 

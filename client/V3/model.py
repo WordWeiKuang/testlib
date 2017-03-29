@@ -24,6 +24,7 @@ class Tag(BaseModel):
     id = TextField(primary_key=True,default=next_id)
     pid = TextField(null=True)
     name = TextField()
+    brief = TextField()
     cover = TextField(null=True)
     ctime = DoubleField(default=time.time)
 

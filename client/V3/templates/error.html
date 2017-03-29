@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+<style>
+    .mdl-grid{
+        align-items: center;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+        <span class="mdl-card__title">
+            {{ error }}
+        </span>
+
+        <a class="mdl-button mdl-js-button mdl-button--raised" href="/">
+          返回首页
+        </a>
+    </div>
+</div>
+{% endblock %}

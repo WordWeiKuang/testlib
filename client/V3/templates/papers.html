@@ -11,7 +11,7 @@
     }
     .mdl-card__media{
         float: left;
-        width:280px;
+        width: 230px;
         margin-right: 20px;
     }
     .mdl-grid > mdl-card__title{
@@ -27,23 +27,23 @@
 
 
 <script>
-    function initVM(data) {
+    function initVM_papers(data) {
         var vm = new Vue({
-            el: '#vm',
+            el: '#vm_papers',
             data: {
-                tags: data.tags
+                papers: data.papers
             }
         });
     }
     $(function() {
-        getJSON('/api/papers', {
-            //page: {{ page_index }}
+        getJSON('/api/papers/'+ '{{ tag.id }}', {
         }, function (err, results) {
             if (err) {
                 return fatal(err);
             }
             //$('#loading').hide();
-            initVM(results);
+            //console.log(results);
+            initVM_papers(results);
         });
     });
 
@@ -55,22 +55,22 @@
 <div class="mdl-grid">
     <div class="mdl-cell mdl-cell--12-col ">
       <div class="mdl-card__media">
-        <img src="http://tfirdaus.github.io/mdl/images/laptop.jpg">
+          {% if tag.cover %}
+          <img src="{{ tag.cover }}">
+          {% else %}
+          <img src="/static/img/lab-flask-leaf.png">
+          {% endif %}
+          
       </div>
       <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text">title Text Goes Here</h2>
+        <h2 class="mdl-card__title-text">{{ tag.name }} </h2>
       </div>
       <div class="mdl-card__subtitle-text">
-        This text might describe the photo and provide further information, such as where and
-        when it was taken.
-          This text might describe the photo and provide further information, such as where and
-        when it was taken.
-          This text might describe the photo and provide further information, such as where and
-        when it was taken.
+        {{ tag.brief }}
       </div>
     </div>
 
-    <table class="mdl-data-table mdl-cell--12-col mdl-js-data-table mdl-shadow--2dp" id="vm">
+    <table class="mdl-data-table mdl-cell--12-col mdl-js-data-table mdl-shadow--2dp" id="vm_papers">
       <thead>
         <tr>
           <th class="mdl-data-table__cell--non-numeric">试卷名称</th>
@@ -80,23 +80,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td class="mdl-data-table__cell--non-numeric">Acrylic (Transparent)</td>
-          <td>100</td>
-          <td>100</td>
-          <td>60</td>
-        </tr>
-        <tr>
-          <td class="mdl-data-table__cell--non-numeric">Plywood (Birch)</td>
-          <td>100</td>
-          <td>100</td>
-          <td>60</td>
-        </tr>
-        <tr>
-          <td class="mdl-data-table__cell--non-numeric">Laminate (Gold on Blue)</td>
-          <td>100</td>
-          <td>100</td>
-          <td>60</td>
+        <tr v-for="paper in papers">
+          <td class="mdl-data-table__cell--non-numeric"><a class="mdl-navigation__link" v-bind:href="'/testing/'+paper.id+'/1'" v-text="paper.name"></a></td>
+          <td><a class="mdl-navigation__link" v-bind:href="'/testing/'+paper.id+'/1'" v-text="paper.munber"></a></td>
+          <td><a class="mdl-navigation__link" v-bind:href="'/testing/'+paper.id+'/1'" v-text="paper.total"></a></td>
+          <td><a class="mdl-navigation__link" v-bind:href="'/testing/'+paper.id+'/1'" v-text="paper.finish_time"></a></td>
         </tr>
       </tbody>
     </table>

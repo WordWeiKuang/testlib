@@ -1,3 +1,25 @@
+<script>
+    var vm = new Vue({
+            el: '#vm_papers',
+            data: {
+                papers: []
+            },
+            mounted: function () {
+                getJSON('/api/papers/'+ '{{ tag.id }}', {
+                        }, function (err, results) {
+                            if (err) {
+                                return fatal(err);
+                            }
+                            this.papers = results.papers;
+                            console.log(this.papers)
+                        });
+            },
+        });
+
+</script>
+
+
+
 <!DOCTYPE html>
 <html lang="zh_CN">
 <head>
@@ -7,6 +29,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Title</title>
     <link rel="stylesheet" href="/static/css/material.css">
+
     <script src="/static/js/material.min.js"></script>
     <link rel="stylesheet" href="/static/iconfont/material-icons.css">
     <script src="/static/js/jquery.min.js"></script>
@@ -14,11 +37,28 @@
     <script src="/static/js/vue.js"></script>
 
     {% block beforehead %}<!-- before head  -->{% endblock %}
-<style>
-    body{
-        font-family:Microsoft YaHei;
+
+<script>
+    function initVM(data) {
+        var vm = new Vue({
+            el: '#vm',
+            data: {
+                tags: data.tags
+            }
+        });
     }
-</style>
+    $(function() {
+        getJSON('/api/tags', {
+            //page: {{ page_index }}
+        }, function (err, results) {
+            if (err) {
+                return fatal(err);
+            }
+            $('#loading').hide();
+            initVM(results);
+        });
+    });
+</script>
 </head>
 
 <body class="components">
@@ -26,6 +66,7 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
             mdl-layout--fixed-header">
   <header class="mdl-layout__header">
+    <div class="mdl-spinner mdl-js-spinner is-active" id="loading"></div>
     <div class="mdl-layout__header-row">
       <div class="mdl-layout-spacer"></div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
@@ -42,10 +83,10 @@
     </div>
   </header>
   <div class="mdl-layout__drawer" id="vm">
-    <span class="mdl-layout-title">分类</span>
-    <div class="mdl-spinner mdl-js-spinner is-active" id="loading"></div>
-    <nav class="mdl-navigation" v-for="item in items">
-      <a class="mdl-navigation__link" v-text="item.name" v-bind:href="'/papers/'+item.id"></a>
+      <span class="mdl-layout-title" href="/">分类</span>
+
+    <nav class="mdl-navigation" v-for="tag in tags">
+      <a class="mdl-navigation__link" v-text="tag.name" v-bind:href="'/papers/'+tag.id"></a>
     </nav>
   </div>
   <main class="mdl-layout__content">
@@ -60,27 +101,3 @@
 
 </body>
 </html>
-
-<script>
-    function initVM(data) {
-        var vm = new Vue({
-            el: '#vm',
-            data: {
-                items: data.tags
-            },
-            mounted : function () {
-                    $('#loading').hide();
-                    }
-        });
-    }
-    $(function() {
-        getJSON('/api/tags', {
-            //page: {{ page_index }}
-        }, function (err, results) {
-            if (err) {
-                return fatal(err);
-            }
-            initVM(results);
-        });
-    });
-</script>

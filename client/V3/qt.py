@@ -41,7 +41,7 @@ class BrowserView(QMainWindow):
     fullscreen_trigger = pyqtSignal()
     current_url_trigger = pyqtSignal()
 
-    def __init__(self, title, url, width, height, resizable, fullscreen, min_size):
+    def __init__(self, title, url, width, height, icon, resizable, fullscreen, min_size):
         super(BrowserView, self).__init__()
         BrowserView.instance = self
         self.is_fullscreen = False
@@ -79,6 +79,8 @@ class BrowserView(QMainWindow):
         self.activateWindow()
         self.raise_()
         #webview_ready.set()
+        if icon is not None:
+            self.setWindowIcon(QIcon(icon))
 
     def _handle_get_current_url(self):
         self._current_url = self.view.url().toString()
@@ -113,11 +115,11 @@ class BrowserView(QMainWindow):
     def load_html(self, content, base_uri):
         self.html_trigger.emit(content, base_uri)
 
-def create_window(title, url=None, width=800, height=600,
+def create_window(title, url=None, width=800, height=600, icon=None,
                   resizable=True, fullscreen=False, min_size=(200, 100), strings={}):
     app = QApplication([])
 
-    browser = BrowserView(title, url, width, height, resizable, fullscreen, min_size)
+    browser = BrowserView(title, url, width, height, fin_icon(icon), resizable, fullscreen, min_size)
     browser.show()
     app.exec_()
 
@@ -144,6 +146,11 @@ def toggle_fullscreen():
 
 def create_file_dialog(dialog_type, directory, allow_multiple, save_filename):
     return BrowserView.instance.create_file_dialog(dialog_type, directory, allow_multiple, save_filename)
+
+def fin_icon(str):
+    if str == None:
+        return None
+    return os.path.abspath(str)
 
 def _transform_url(url):
     if url == None:
