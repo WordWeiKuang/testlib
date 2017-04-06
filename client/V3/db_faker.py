@@ -6,7 +6,7 @@ from datetime import datetime
 faker =  Factory.create('zh_CN')
 
 d1 = datetime.now()
-
+'''
 answer = ['A', 'B', 'C', 'D']
 for i in range(100):
     answer_list = 'A.%s,B.%s,C.%s,D.%s' % (faker.word(), faker.word(), faker.word(), faker.word())
@@ -16,6 +16,15 @@ for i in range(100):
     print('item :'+ str(data.index)+ 'done')
 
     data.save()
+'''
+items = Item.select()
+for item in items:
+    item.answer_A = faker.word()
+    item.answer_B = faker.word()
+    item.answer_C = faker.word()
+    item.answer_D = faker.word()
+    item.save()
+
 d2 = datetime.now()
 print((d2-d1))
 

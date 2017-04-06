@@ -62,6 +62,10 @@ def testing2(paper_id):
     papers = Paper.select().where(Paper.id == paper_id)
     return render_template("item2.html", paper=papers[0])
 
+@app.route("/test/results/<paper_id>")
+def test_results(paper_id):
+    pass
+
 @app.route("/api/tags")
 def get_tags():
     tags = Tag.select().dicts()
@@ -89,6 +93,18 @@ def get_item(paper_id):
     state = TestState(paper=paper, items=list(items))
     response = {'state':state.dicts()}
     return jsonify(response)
+
+@app.route("/api/testing/commit",methods=['POST'])
+def commit_paper():
+    data = request.json
+    if not data:
+        raise APIValueError('state', 'Invalid state.')
+    print(data)
+    r = app.make_default_options_response()
+    r.content_type = 'application/json'
+    r.body = jsonify({'state':'ok'})
+    return r
+    #r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
 
 def run_server():
     app.run(host="127.0.0.1", port=23948, threaded=True)

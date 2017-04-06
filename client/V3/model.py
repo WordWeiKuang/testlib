@@ -30,6 +30,7 @@ class Tag(BaseModel):
 
 class Paper(BaseModel):
     id = TextField(primary_key=True,default=next_id)
+    state = TextField(null=True)
     name = TextField()
     tag = TextField(null=True)
     cover = TextField(null=True)
@@ -44,6 +45,10 @@ class Item(BaseModel):
     content = TextField()
     answer = TextField()
     answer_list = TextField()
+    answer_A = TextField(null=True)
+    answer_B = TextField(null=True)
+    answer_C = TextField(null=True)
+    answer_D = TextField(null=True)
     answer_type = TextField()
     user_answer = TextField()
     score = IntegerField(null=True)

@@ -456,26 +456,3 @@ function error(err) {
 function fatal(err) {
     _display_error($('#loading'), err);
 }
-/*
-timer: function () {
-                         var self = this;
-                         return setInterval(function () {
-                            var n_sec = 0;var n_min = 0;var n_hour = 0;
-                            if ( n_sec < 10)str_sec = "0" + n_sec;
-                            if ( n_min < 10 )str_min = "0" + n_min;
-                            if ( n_hour < 10 )str_hour = "0" + n_hour;
-                            var time = str_hour + ":" + str_min + ":" + str_sec;
-                            Vue.set(self.date)
-                            n_sec++;
-                            if (n_sec > 59){
-                                n_sec = 0;
-                                n_min++;
-                            }
-                            if (n_min > 59) {
-                                n_sec = 0;
-                                n_hour++;
-                            }
-                            return time;
-                         }, 1000);
-                        }
- */

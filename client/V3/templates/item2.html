@@ -53,7 +53,12 @@
             },
             computed: {
                  _answer_list: function () {
-                    var list = this.item.answer_list.split(',');
+                    //var list = this.item.answer_list.split(',');
+                    var list = []
+                    if(this.item.answer_A) list.push('A.'+this.item.answer_A)
+                    if(this.item.answer_B) list.push('B.'+this.item.answer_B)
+                    if(this.item.answer_C) list.push('C.'+this.item.answer_C)
+                    if(this.item.answer_D) list.push('D.'+this.item.answer_D)
                     return list
                  }
             },
@@ -71,6 +76,18 @@
                     trues = this.state.true_items;
                     if(arr[0]==this.item.answer) trues.push(this.item.id)
                     this.state.true_items = $.unique(trues);
+                },
+                commit_paper: function () {
+                    var data = {
+                        state: this.state
+                    };
+                    if (confirm('是否提交答卷：“' + this.state.paper.name+'”')) {
+                    postJSON('/api/testing/commit', data, function (err, r) {
+                        if (err.data==200) {
+                            location.assign('/');
+                        }
+                    });
+                }
                 },
                 previous: function () {
                     if (this.index > 1) {
@@ -107,7 +124,7 @@
                                 n_min++;
                             }
                             if (n_min > 59) {
-                                n_sec = 0;
+                                n_min = 0;
                                 n_hour++;
                             }
                         }, 1000)
@@ -155,7 +172,7 @@
             <button class="mdl-button mdl-js-button">
                 <i class="material-icons">favorite_border</i>收藏此题
             </button>
-            <button class="mdl-button mdl-js-button">
+            <button class="mdl-button mdl-js-button" v-on:click="commit_paper">
                 <i class="material-icons">done_all</i>提交答卷
             </button>
         </div>
