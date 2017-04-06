@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Title</title>
     <link rel="stylesheet" href="/static/css/material.css">
-    <script src="/static/js/material.min.js"></script>
+    <script src="/static/js/material.js"></script>
     <link rel="stylesheet" href="/static/iconfont/material-icons.css">
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/awesome.js"></script>
@@ -44,6 +44,7 @@
   <div class="mdl-layout__drawer" id="vm">
     <span class="mdl-layout-title">分类</span>
     <div class="mdl-spinner mdl-js-spinner is-active" id="loading"></div>
+      <a class="mdl-navigation__link" href="/test/001489370312652c789dd94483043f69b6430856495d491000">test</a>
     <nav class="mdl-navigation" v-for="item in items">
       <a class="mdl-navigation__link" v-text="item.name" v-bind:href="'/papers/'+item.id"></a>
     </nav>

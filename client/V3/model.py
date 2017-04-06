@@ -45,6 +45,7 @@ class Item(BaseModel):
     answer = TextField()
     answer_list = TextField()
     answer_type = TextField()
+    user_answer = TextField()
     score = IntegerField(null=True)
     paper = TextField()
     ctime = DoubleField(default=time.time)

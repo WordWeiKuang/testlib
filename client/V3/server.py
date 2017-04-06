@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, url_for, render_template, jsonify, request, make_response
 from model import User, Paper, Item, Tag
-from apis import Page, APIValueError, APIResourceNotFoundError
+from apis import Page, TestState, APIValueError, APIResourceNotFoundError
+import json
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1  # disable caching
@@ -15,6 +16,10 @@ def get_page_index(page_str):
     if p < 1:
         p = 1
     return p
+
+#@app.before_request
+#def testing2state():
+#    pass
 
 @app.after_request
 def add_header(response):
@@ -52,6 +57,11 @@ def testing(paper_id, index='1'):
     item = items[0]
     return render_template("items.html", item = item, page = p)
 
+@app.route("/test/<paper_id>")
+def testing2(paper_id):
+    papers = Paper.select().where(Paper.id == paper_id)
+    return render_template("item2.html", paper=papers[0])
+
 @app.route("/api/tags")
 def get_tags():
     tags = Tag.select().dicts()
@@ -68,14 +78,16 @@ def get_papers(tag_id):
     response = {'papers':list(papers)}
     return jsonify(response)
 
-@app.route("/api/item/<paper>/<index>")
-def get_item(paper, index='1'):
-    index = get_page_index(index)
-    num = Item.select().where(Item.paper == paper)
+@app.route("/api/item/<paper_id>")
+def get_item(paper_id):
+    num = Item.select().where(Item.paper == paper_id)
     if not num:
         raise APIValueError('item')
-    items = Item.select().where((Item.paper == paper)&(Item.index == index)).dicts()
-    response = {'item': list(items)[0]}
+    papers = Paper.select().where(Paper.id == paper_id).dicts()
+    paper = list(papers)[0]
+    items = Item.select().where(Item.paper == paper_id).order_by(Item.index).dicts()
+    state = TestState(paper=paper, items=list(items))
+    response = {'state':state.dicts()}
     return jsonify(response)
 
 def run_server():

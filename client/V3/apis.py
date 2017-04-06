@@ -59,6 +59,20 @@ class Page(object):
 
     __repr__ = __str__
 
+class TestState(object):
+    def __init__(self, paper, utime=0, index=1, items=[], finish_items=[], true_items=[], false_items=[], score=0):
+        self.paper = paper
+        self.utime = utime
+        self.index = index
+        self.items = items
+        self.finish_items = finish_items
+        self.true_items = true_items
+        self.false_items = false_items
+        self.score = score
+
+    def dicts(self):
+        return self.__dict__
+
 class APIError(Exception):
     '''
     the base APIError which contains error(required), data(optional) and message(optional).

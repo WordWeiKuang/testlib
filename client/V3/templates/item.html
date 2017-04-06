@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+<style>
+  .paper_card{
+    max-height: 20%;
+  }
+  .mdl-card__media > img {
+    max-width: 100%;
+  }
+  .mdl-card__media{
+    float: left;
+    width: 230px;
+    margin-right: 20px;
+    padding: 10px;
+  }
+  .mdl-grid > paper_title{
+    float: left;
+    max-width: 50%;
+  }
+  .mdl-grid > paper_text{
+    float: left;
+    max-width: 80%;
+  }
+
+  .items{
+    min-height: 300px;
+  }
+  .mdl-radio{
+    min-width: 100%;
+    margin: 10px;
+  }
+  .mdl-radio__label{
+    margin-right: 20px;
+  }
+  .arrow{
+    padding: 20px
+  }
+  .answer_text{
+    font-size: medium;
+  }
+</style>
+
+
+<script>
+    function initVM_papers(data) {
+        var vm = new Vue({
+            el: '#vm_testing',
+            data: {
+                state: data.state,
+                _item: null
+            },
+            computed: {
+              _answer_list: function () {
+                  var list = this._item.answer_list.split(',');
+                  return list
+              },
+              previous: function () {
+                  var state_index = this.state.index;
+                  var _item = this._item
+                  if(state_index>1){
+                      state_index -= 1;
+                  }
+                  else {return this._item}
+                  this.state.items.forEach(function(item) {
+                      if(item.index==state_index){
+                          _item = item;
+                      }
+                  });
+                  this._item = _item;
+                  return _item;
+              },
+              next: function () {
+                  var state_index = this.state.index;
+                  var _item = this._item
+                  if(state_index<this.state.items.length){
+                      state_index +=1;
+                  }else {return this._item}
+                  this.state.items.forEach(function (item) {
+                      if(item.index==state_index){
+                          _item = item;
+                      }
+                  });
+                  this._item = _item;
+                  return _item;
+              }
+            },
+            methods: {
+              show_answer: function (event) {
+                 $('#answer_box').toggle();
+              }
+            },
+            created: function () {
+              this._item = this.state.items[0];
+            },
+            mounted: function () {
+              //console.log(this.state)
+            },
+        });
+    }
+    $(function() {
+        getJSON('/api/item/'+ '{{ paper.id }}', {
+        }, function (err, results) {
+            if (err) {
+                return fatal(err);
+            }
+            //$('#loading').hide();
+            //console.log(results);
+            initVM_papers(results);
+        });
+    });
+
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="mdl-grid" id="vm_testing">
+  <div class="paper_card mdl-cell mdl-cell--12-col mdl-shadow--2dp">
+    <div class="mdl-card__media">
+        {% if paper.cover %}
+        <img src="{{ paper.cover }}">
+        {% else %}
+        <img src="/static/img/lab-flask-leaf.png">
+        {% endif %}
+    </div>
+    <div class="paper_title mdl-card__title">
+      <h2 class="mdl-card__title-text" v-text="state.paper.name"></h2>
+    </div>
+    <div class="paper_text mdl-card__subtitle-text">
+      第<span v-text="state.index"></span>题&nbsp;&nbsp;
+      已完成<span v-text="state.finish_items.length"></span>题&nbsp;&nbsp;
+      共<span v-text="state.items.length"></span>题
+    </div>
+  </div>
+
+  <div class="items mdl-cell mdl-cell--12-col mdl-shadow--2dp">
+    <div class="mdl-card__title">
+      <h5 v-text="_item.answer_type"></h5>
+    </div>
+    <div class="mdl-card__supporting-text">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span v-text="_item.content"></span>
+    </div>
+    <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" style="margin-bottom: 20px;max-width: 20%;float:left;">
+          <input type="checkbox" id="switch-2" class="mdl-switch__input" v-on:click="show_answer">
+          <span class="mdl-switch__label">答案</span>
+        </label>
+        <span id="answer_box" style="max-width:50%;float:right;color:#ab47bc;display: none">
+          正确答案：<span  v-text="_item.answer"></span>
+        </span>
+        <span v-for="(item, index) in _answer_list">
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" v-bind:for="'option-'+index">
+            <input type="radio" v-bind:id="'option-'+index" class="mdl-radio__button" name="options" v-bind:value="index">
+            <span class="mdl-radio__label mdl-card__supporting-text" v-text="item"></span>
+          </label>
+        </span>
+    </div>
+    <div class="arrow mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-js-button" style="float:left;margin-bottom: 20px" v-on:click="previous">
+          <i class="material-icons">keyboard_arrow_left</i>
+          上一题
+        </a>
+        <a class="mdl-button mdl-js-button" style="float:right;margin-bottom: 20px" v-on:click="next">
+          <i class="material-icons">keyboard_arrow_right</i>
+          下一题
+        </a>
+      </div>
+  </div>
+</div>
+{% endblock %}
