@@ -60,17 +60,18 @@ class Page(object):
     __repr__ = __str__
 
 class TestState(object):
-    def __init__(self, paper, status=None, utime=0, index=1, items=[], finish_items=[], true_items=[], false_items=[], score=0, finish_time=None):
+    def __init__(self, paper, status=None, results=[], utime=0, index=1, finish_items=[], unfinish_items=[],
+                 true_items=[], false_items=[], score=0, finish_time=None):
         self.status = status
+        self.results = results
         self.paper = paper
         self.utime = utime
-        self.index = index
-        self.items = items
         self.finish_items = finish_items
+        self.unfinish_items = unfinish_items
         self.true_items = true_items
         self.false_items = false_items
         self.score = score
-        self.finish_item = finish_time
+        self.finish_time = finish_time
 
     def dicts(self):
         return self.__dict__

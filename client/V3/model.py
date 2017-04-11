@@ -44,7 +44,7 @@ class Item(BaseModel):
     index = IntegerField()
     content = TextField()
     answer = TextField()
-    answer_list = TextField()
+    answer_list = TextField(null=True)
     answer_A = TextField(null=True)
     answer_B = TextField(null=True)
     answer_C = TextField(null=True)

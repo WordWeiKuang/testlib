@@ -42,23 +42,25 @@
 
 <script>
     function initVM_papers(data) {
+        console.log(data)
         var vm = new Vue({
             el: '#vm_testing',
             data: {
                 state: data.state,
-                items: data.state.items,
+                items: data.items,
                 item: [],
                 index: 0,
-                date:[{"time":"0"}]
+                date:[{"time":"0"}],
+                d1: new Date()
             },
             computed: {
                  _answer_list: function () {
                     //var list = this.item.answer_list.split(',');
                     var list = []
-                    if(this.item.answer_A) list.push('A.'+this.item.answer_A)
-                    if(this.item.answer_B) list.push('B.'+this.item.answer_B)
-                    if(this.item.answer_C) list.push('C.'+this.item.answer_C)
-                    if(this.item.answer_D) list.push('D.'+this.item.answer_D)
+                    if(this.item.answer_A) list.push({name:'A',value:this.item.answer_A})
+                    if(this.item.answer_B) list.push({name:'B',value:this.item.answer_B})
+                    if(this.item.answer_C) list.push({name:'C',value:this.item.answer_C})
+                    if(this.item.answer_D) list.push({name:'D',value:this.item.answer_D})
                     return list
                  }
             },
@@ -67,24 +69,33 @@
                     $('#answer_box').toggle();
                 },
                 check_item: function (event) {
+                    self = this
+                    self.item.user_answer = event.target.value
                     //add item to finish list
                     var finishs = this.state.finish_items;
                     finishs.push(this.item.id);
                     this.state.finish_items = $.unique(finishs);
-                    //add true item to list
-                    arr = event.target.value.split('.');
-                    trues = this.state.true_items;
-                    if(arr[0]==this.item.answer) trues.push(this.item.id)
-                    this.state.true_items = $.unique(trues);
                 },
                 commit_paper: function () {
+                    self = this
+                    d2 = new Date()
+                    console.log(d2)
+                    self.state.utime = d2-self.d1
+                    self.state.finish_time = d2
                     var data = {
-                        state: this.state
+                        state: self.state
                     };
-                    if (confirm('是否提交答卷：“' + this.state.paper.name+'”')) {
+                    if (confirm('是否提交答卷：“' + self.state.paper.name+'”')) {
+                        self.items.forEach(function (i) {
+                            var pick ={
+                                item : i.id,
+                                user_answer : i.user_answer
+                            }
+                        self.state.results.push(pick)
+                    });
                     postJSON('/api/testing/commit', data, function (err, r) {
-                        if (err.data==200) {
-                            location.assign('/');
+                        if(r){
+                            location.assign(r.url)
                         }
                     });
                 }
@@ -96,7 +107,6 @@
                     }else return;
                 },
                 next: function () {
-                    var time = $.now()
                     if (this.index < this.items.length) {
                           (this.index==0) ? this.index+=2 : this.index+=1;
                           this.item = this.items[this.index-1];
@@ -162,7 +172,7 @@
         <div class="paper_text mdl-card__subtitle-text">
             第<span v-text="item.index"></span>题&nbsp;&nbsp;
             已完成<span v-text="state.finish_items.length"></span>题&nbsp;&nbsp;
-            共<span v-text="state.items.length"></span>题</br></br>
+            共<span v-text="items.length"></span>题</br></br>
             已用时：<span v-for="l in date"><span v-text="l.time"></span></span></br></br>
         </div>
         <div class="paper_action mdl-card__subtitle-text">
@@ -193,8 +203,9 @@
         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
             <span v-for="(item, index) in _answer_list" v-on:click="check_item">
                 <label class="radio_lab">
-                    <input type="radio" name="gender"  v-bind:value="item" checked="false">
-                    <span v-text="item" class="radio__label"></span> <br>
+                    <input type="radio" name="gender"  v-bind:value="item.name" checked="false">
+                    <span v-text="item.name"></span>.
+                    <span v-text="item.value" class="radio__label"></span> <br>
                 </label>
             </span>
 
@@ -213,15 +224,3 @@
   </div>
 </div>
 {% endblock %}
-
-<!--
-<label style="margin-bottom: 10px;min-width:70%;float:left;" >
-            <button class="mdl-button mdl-js-button" v-on:click="show_answer">
-                <i class="material-icons">visibility</i>
-                答案
-            </button>
-        </label>
-        <label id="answer_box" style="min-width:30%;float:right;color:#ab47bc;display: none">
-            正确答案：<span  v-text="item.answer"></span></label>
-        </label>
--->
