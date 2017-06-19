@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/vue-material.css">
+    <script src="./js/vue-material.js"></script>
+</head>
+<body>
+<div id="vm">
+    <md-avatar>
+    <img src="assets/avatar.png" alt="Avatar">
+    </md-avatar>
+
+    <md-avatar class="md-avatar-icon">
+    <md-icon>home</md-icon>
+    </md-avatar>
+
+    <md-avatar class="md-avatar-icon md-primary">
+    <md-icon>folder</md-icon>
+    </md-avatar>
+
+    <md-avatar class="md-avatar-icon md-accent">
+    <md-icon>favorite</md-icon>
+    </md-avatar>
+
+    <md-avatar class="md-avatar-icon md-warn">
+    <md-icon>notes</md-icon>
+    </md-avatar>
+</div>
+
+
+<script>
+    Vue.use(VueMaterial)
+    Vue.material.registerTheme('default', {
+      primary: 'blue',
+      warn: 'red',
+    })
+    var VM = new Vue({
+        el: '#vm',
+    data:{
+    },
+    beforeCreate(){
+    },
+    created(){
+    },
+    methods: {
+    }
+    });
+</script>
+
+</body>
+</html>

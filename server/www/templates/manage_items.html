@@ -1,0 +1,198 @@
+{% extends '__manage_layout__.html' %}
+
+{% block beforehead %}
+    <link rel="stylesheet" href="/static/css/vue-material.css">
+    <script src="/static/js/vue-material.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+<style>
+.item_paper_select{
+    width: 100%;
+}
+.items{
+    margin-top: 2%;
+    width: 100%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="mdl-grid demo-content" id="vm_items">
+        <div class="mdl-cell mdl-cell--12-col mdl-grid">
+            <div class="item_paper_select">
+                    <h5>请选择试卷</h5>
+                  <md-input-container>
+                    <label for="movie">选择试卷</label>
+                    <md-select name="movie" id="movie" v-model="paper_id">
+                      <span v-for="item in papers">
+                          <md-option v-bind:value="item.id"><span v-text="item.name"></span></md-option>
+                      </span>
+                    </md-select>
+                  </md-input-container>
+                <md-whiteframe md-elevation="4" v-if="paper.name">
+                    <md-card>
+                      <md-card-header>
+                        <md-card-header-text>
+                          <div class="md-title"><span v-text="paper.name"></span></div>
+                          <div class="md-subhead"><span v-text="paper.brief"></span></div>
+                        </md-card-header-text>
+
+                        <md-menu md-size="4" md-direction="bottom left">
+                          <md-button class="md-icon-button" md-menu-trigger>
+                            <md-icon>more_vert</md-icon>
+                          </md-button>
+
+                          <md-menu-content>
+                            <md-menu-item>
+                              <span>Call</span>
+                            </md-menu-item>
+
+                            <md-menu-item>
+                              <span>Send a message</span>
+                            </md-menu-item>
+                          </md-menu-content>
+                        </md-menu>
+                      </md-card-header>
+
+                      <md-card-content>
+                          <span v-text="'题目数：'+paper.munber"></span><!--<span v-text="'总分：'+paper.munber"></span>-->
+                      </md-card-content>
+
+                      <md-card-actions>
+                        <md-button v-bind:href="'/manage/item/create?paper_id='+paper.id">添加题目</md-button>
+                        <md-button>查看测试</md-button>
+                      </md-card-actions>
+                    </md-card>
+                </md-whiteframe>
+            </div>
+            <div class="items" v-for="item in items">
+                <md-card>
+                  <md-card-area>
+                    <md-card-header>
+                      <div class="md-title">第<span v-text="item.index"></span>题</div>
+                      <div class="md-subhead"><span v-text="item.answer_type"></span></div>
+                    </md-card-header>
+                    <md-card-content>
+                        <span v-text="item.content"></span>
+                    </md-card-content>
+                    <md-list>
+                        <md-list-item>
+                          <md-icon>list</md-icon>
+                            <span>选项...</span>
+                          <md-list-expand>
+                            <md-list>
+                              <md-list-item class="md-inset"><span v-text="'正确答案：'+item.answer"></span></md-list-item>
+                              <!--<md-list-item class="md-inset"><span v-text="'正确答案：'+item.answer+', 此题分数：'+item.score"></span></md-list-item>-->
+                              <md-list-item class="md-inset" v-if="item.answer_A"><span v-text="'A:  '+item.answer_A"></span></md-list-item>
+                              <md-list-item class="md-inset" v-if="item.answer_B"><span v-text="'B:  '+item.answer_B"></span></md-list-item>
+                              <md-list-item class="md-inset" v-if="item.answer_C"><span v-text="'C:  '+item.answer_C"></span></md-list-item>
+                              <md-list-item class="md-inset" v-if="item.answer_D"><span v-text="'D:  '+item.answer_D"></span></md-list-item>
+                            </md-list>
+                          </md-list-expand>
+                        </md-list-item>
+                    </md-list>
+                  </md-card-area>
+                  <md-card-actions>
+                    <md-button @click.native="edit_item(item)">修改</md-button>
+                    <md-button @click.native="delete_item(item)">删除</md-button>
+                  </md-card-actions>
+                </md-card>
+            </div>
+        </div>
+    </div>
+<script>
+var PAGE_INDEX='{{ page_index }}'
+var PAPER_ID='{{ paper_id }}'
+Vue.use(VueMaterial)
+Vue.material.registerTheme('default', {
+  primary: 'blue',
+  accent: 'red',
+  warn: 'red',
+})
+var Vmitems = new Vue({
+    el: '#vm_items',
+    data:{
+        items:[],
+        paper_id:'',
+        paper:{},
+        papers:[],
+        Breadcrumb:'标签'
+    },
+    created(){
+        let self = this;
+        axios.get('/api/get_papers')
+            .then(function (response) {
+                self.papers = response.data.papers
+                self.show_paper(PAPER_ID)
+                self.show_items(PAPER_ID)
+            })
+            .catch(function (error) {
+                console.log(error);
+        });
+    },
+    mounted(){
+      let self = this;
+
+    },
+    watch:{
+        paper_id:function () {
+            let self = this;
+            axios.get('/api/items/'+self.paper_id)
+              .then(function (response) {
+                  self.items = response.data.items
+              })
+              .catch(function (error) {
+                console.log(error);
+            });
+            self.show_paper(self.paper_id)
+        }
+    },
+    methods: {
+        show_paper:function (paper_id) {
+            let self = this;
+            if(!paper_id){return false}
+            self.papers.forEach(function (item) {
+                if(item.id == paper_id){
+                    self.paper = item;
+                    return;
+                }
+            });
+        },
+        show_items:function (paper_id) {
+            let self = this;
+            if(!paper_id){return false}
+            axios.get('/api/items/'+paper_id)
+              .then(function (response) {
+                  self.items = response.data.items
+              })
+              .catch(function (error) {
+                console.log(error);
+            });
+        },
+        edit_item:function (item) {
+            location.assign('/manage/item/edit?id=' + item.id);
+        },
+        delete_item: function (item) {
+            let self = this;
+            let deitem = item;
+            if (confirm('确认要删除“' + deitem.index + '”题？删除后不可恢复！')) {
+                axios.post('/api/item/' + item.id + '/delete',{})
+                .then(function (response) {
+                    self.items.forEach(function (i,index) {
+                        if(i.id == deitem.id){
+                            self.items.splice(index,1)
+                            return false;
+                        }
+                    })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+            }
+        }
+    }
+});
+
+</script>
+
+{% endblock %}

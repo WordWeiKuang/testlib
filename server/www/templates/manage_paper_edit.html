@@ -1,0 +1,137 @@
+{% extends '__manage_layout__.html' %}
+
+{% block beforehead %}
+    <link rel="stylesheet" href="/static/css/vue-material.css">
+    <script src="/static/js/vue-material.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+<style>
+    .edit{
+        width: 100%;
+    }
+    .imgbox{
+        max-width: 30%;
+        height: 100%;
+        float: left;
+        margin-right: 10%;
+        padding: 10px;
+    }
+    .mdl-card__media > img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    .input{
+        width: 90%;
+    }
+    .edit_list{
+        margin-top: 10px;
+        float: left;
+        width: 60%;
+    }
+    .edit_button{
+        margin-bottom: 10px;
+        float: left;
+        width: 60%;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="mdl-grid demo-content" id="vmpedit">
+        <div class="mdl-cell mdl-cell--12-col mdl-grid" id="vm">
+            <form @submit.prevent="submit" class="edit mdl-shadow--6dp">
+                <div class="imgbox mdl-card__media mdl-shadow--2dp">
+                    <img src="/static/img/lab-flask-leaf.png">
+                </div>
+                <div class="edit_list">
+                    <md-input-container>
+                        <label>试卷名称</label>
+                        <md-input v-model="name"></md-input>
+                    </md-input-container>
+                </div>
+                <div class="edit_list">
+                    <md-input-container>
+                        <label>试卷简介</label>
+                        <md-textarea v-model="brief"></md-textarea>
+                    </md-input-container>
+                </div>
+                <div class="edit_list">
+                      <md-input-container>
+                        <label for="paper_tag">试卷标签/(分类)</label>
+                        <md-select name="paper_tag" v-model="tag">
+                            <span v-for="item in tags">
+                                <md-option v-bind:value="item.id"><span v-text="item.name"></span></md-option>
+                            </span>
+                        </md-select>
+                      </md-input-container>
+                </div>
+
+                <div class="edit_button">
+                    <md-button href="/manage/papers" class="md-accent">取消</md-button>
+                    <md-button type="submit" class="md-primary">保存</md-button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+var
+    ID = '{{ id }}',
+    action = '{{ action }}';
+    console.log(action);
+Vue.use(VueMaterial)
+Vue.material.registerTheme('default', {
+  primary: 'blue',
+  accent: 'red',
+  warn: 'red',
+})
+var VmPedit = new Vue({
+    el: '#vmpedit',
+    data: {
+            name:'',
+            brief:'',
+            tag:'',
+            tags:[]
+    },
+    created(){
+        let self = this
+        if(ID){
+            axios.get('/api/paper/'+ID)
+              .then(function (response) {
+                  paper = response.data
+                  self.name = paper.name
+                  self.brief = paper.brief
+                  self.tag = paper.tag
+              })
+              .catch(function (error) {
+                console.log(error);
+            });
+        }
+        axios.get('/api/get_tags')
+          .then(function (response) {
+            self.tags = response.data.tags
+          })
+          .catch(function (error) {
+            console.log(error);
+        });
+    },
+    methods: {
+        submit : function () {
+            let self = this
+            axios.post(action, {
+                name:self.name,
+                brief:self.brief,
+                tag:self.tag
+            })
+            .then(function (response) {
+                return location.assign('/manage/papers');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    }
+});
+</script>
+
+{% endblock %}

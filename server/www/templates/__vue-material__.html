@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Title</title>
+    <script src="/static/js/vue.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/material-icons.css">
+    <script src="/static/js/vue-material.js"></script>
+    <link rel="stylesheet" href="/static/css/vue-material.css">
+
+    {% block beforehead %}<!-- before head  -->{% endblock %}
+<style>
+    body{
+        font-family:Microsoft YaHei;
+    }
+</style>
+</head>
+
+<body>
+    <div id="layout">
+
+          <md-toolbar>
+            <md-button class="md-icon-button" @click.native="toggleLeftSidenav">
+              <md-icon>menu</md-icon>
+            </md-button>
+
+            <h2 class="md-title">My App</h2>
+
+            <md-button>Add</md-button>
+            <md-button>Remove</md-button>
+
+          </md-toolbar>
+
+          <div>
+            <md-button class="md-raised md-accent" @click.native="toggleRightSidenav">Toggle right</md-button>
+            <p>Open console to see the events</p>
+          </div>
+
+    {% block content %}
+
+    {% endblock %}
+
+          <md-sidenav class="md-left" ref="leftSidenav" @open="open('Left')" @close="close('Left')" md-swipeable>
+            <md-toolbar class="md-large">
+              <div class="md-toolbar-container">
+                <h3 class="md-title">Sidenav content</h3>
+              </div>
+            </md-toolbar>
+
+                <md-list>
+                  <md-list-item @click.native="" class="md-primary">
+                    <md-icon>insert_drive_file</md-icon> <span>My files</span>
+                  </md-list-item>
+
+                  <md-list-item @click.native="$refs.sidenav.toggle()">
+                    <md-icon>people</md-icon> <span>Shared with me</span>
+                  </md-list-item>
+
+                  <md-list-item @click.native="$refs.sidenav.toggle()">
+                    <md-icon>access_time</md-icon> <span>Recent</span>
+                  </md-list-item>
+
+                  <md-list-item @click.native="$refs.sidenav.toggle()">
+                    <md-icon>start</md-icon> <span>Starred</span>
+                  </md-list-item>
+
+                  <md-list-item @click.native="$refs.sidenav.toggle()">
+                    <md-icon>delete</md-icon> <span>Trash</span>
+                  </md-list-item>
+                </md-list>
+            </md-sidenav>
+    </div>
+</body>
+</html>
+
+<script>
+Vue.use(VueMaterial)
+var layout = new Vue({
+   el: '#layout',
+   methods: {
+    toggleLeftSidenav() {
+      this.$refs.leftSidenav.toggle();
+    },
+    open(ref) {
+      console.log('Opened: ' + ref);
+    },
+    close(ref) {
+      console.log('Closed: ' + ref);
+    }
+  }
+})
+</script>

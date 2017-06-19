@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/material.css">
+    <script src="/static/js/material.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/material-icons.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    <script src="/static/js/vue.js"></script>
+<style>
+    body{
+        font-family:Microsoft YaHei;
+    }
+    .mdl-grid{
+        align-items: center;
+        min-height: 400px;
+    }
+    .mdl-cell{
+        padding-top: 10%;
+        padding-bottom: 10%;
+        padding-left: 30%;
+        max-width: 70%;
+    }
+    .error{
+        margin: 20%;
+    }
+</style>
+</head>
+<body>
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <div class="mdl-card__title" style="margin: 5%">
+                <h3>歡迎使用學習系統</h3>
+            </div>
+            <form action="{{ url_for('user2code') }}" method="post">
+                <span class="mdl-card__subtitle-text">請輸入驗證碼</span>
+                <div class="mdl-card__actions mdl-card--border">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="text" id="sample1" name="code">
+                        <label class="mdl-textfield__label" for="sample1">驗證碼</label>
+                    </div>
+                </div>
+                <input type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" value="提交">
+            </form>
+            <div class="error mdl-color-text--pink-500">
+                  {% if error %}{{ error }}{% endif %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

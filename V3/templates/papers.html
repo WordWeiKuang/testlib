@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+<style>
+    .mdl-grid{
+        max-width: 1000px;
+        min-width: 800px;
+    }
+    .mdl-card__media > img {
+	    max-width: 100%;
+    }
+    .mdl-card__media{
+        float: left;
+        width: 230px;
+        margin-right: 20px;
+    }
+    .mdl-grid > mdl-card__title{
+        float: left;
+        max-width: 50%;
+    }
+    .mdl-grid > mdl-card__subtitle-text{
+        float: left;
+        max-width: 80%;
+    }
+    a.disabled {
+        pointer-events: none;
+    }
+
+</style>
+
+
+<script>
+
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col ">
+      <div class="mdl-card__media">
+          {% if tag.cover %}
+          <img src="{{ tag.cover }}">
+          {% else %}
+          <img src="/static/img/lab-flask-leaf.png">
+          {% endif %}
+          
+      </div>
+      <div class="mdl-card__title">
+        <h2 class="mdl-card__title-text">{{ tag.name }} </h2>
+      </div>
+      <div class="mdl-card__subtitle-text">
+        {{ tag.brief }}
+      </div>
+    </div>
+
+    <table class="mdl-data-table mdl-cell--12-col mdl-js-data-table mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">试卷名称</th>
+          <th>题数</th>
+          <th>总分</th>
+          <th>狀態</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+
+          {% for item in papers %}
+              <tr>
+              <td class="mdl-data-table__cell--non-numeric"><a class="mdl-navigation__link">{{ item.name }}</a></td>
+              <td><a class="mdl-navigation__link">{{ item.munber }}</a></td>
+              <td><a class="mdl-navigation__link">{{ item.total }}</a></td>
+              <td><a class="mdl-navigation__link">{% if item.state %}已完成{% else %}未完成{% endif %}</a></td>
+              <td>
+                  <a class="mdl-navigation__link" href="/test/{{ item.id }}"><i class="material-icons" title="開始測試">create</i></a>
+                  {% if item.state %}
+                  <a class="mdl-navigation__link" href="/test/results/{{ item.id }}" disabled><i class="material-icons" title="查看結果">content_paste</i></a>
+                  {% endif %}
+              </td>
+              </tr>
+          {% endfor %}
+
+      </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

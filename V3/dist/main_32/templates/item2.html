@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+<style>
+  .paper_card{
+
+  }
+  .mdl-card__media > img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .mdl-card__media{
+    float: left;
+    width: 230px;
+    margin-right: 20px;
+    padding: 10px;
+  }
+  .mdl-grid > paper_title{
+    float: left;
+    max-width: 50%;
+  }
+  .mdl-grid > paper_text{
+    float: left;
+    max-width: 80%;
+  }
+
+  .items{
+    min-height: 300px;
+  }
+  .radio_lab{
+    min-width: 100%;
+    margin: 10px;
+  }
+  .radio__label{
+    margin-right: 20px;
+  }
+  .arrow{
+    padding: 20px
+  }
+</style>
+
+
+<script>
+    function initVM_papers(data) {
+        console.log(data)
+        var vm = new Vue({
+            el: '#vm_testing',
+            data: {
+                state: data.state,
+                items: data.items,
+                item: [],
+                results: [],
+                index: 0,
+                date:[{"time":"0"}],
+                d1: new Date()
+            },
+            computed: {
+                 _answer_list: function () {
+                    //var list = this.item.answer_list.split(',');
+                    var list = []
+                    if(this.item.answer_A) list.push({name:'A',value:this.item.answer_A})
+                    if(this.item.answer_B) list.push({name:'B',value:this.item.answer_B})
+                    if(this.item.answer_C) list.push({name:'C',value:this.item.answer_C})
+                    if(this.item.answer_D) list.push({name:'D',value:this.item.answer_D})
+                    return list
+                 }
+            },
+            methods: {
+                show_answer: function () {
+                    $('#answer_box').toggle();
+                },
+                check_item: function (event) {
+                    self = this
+                    self.item.user_answer = event.target.value
+                    //add item to finish list
+                    var finishs = this.state.finish_items;
+                    finishs.push(this.item.id);
+                    this.state.finish_items = $.unique(finishs);
+                },
+                item_jump: function(event){
+                    var str = event.target.value
+                    var jum = Number(str)
+                    if(jum==NaN)
+                        return
+                    if(jum<1 && jum>this.items.length)
+                        return
+                    this.index = jum
+                    this.item = this.items[jum-1]
+                    console.log(jum)
+                },
+                commit_paper: function () {
+                    self = this
+                    d2 = new Date()
+                    self.state.utime = d2-self.d1
+                    self.state.finish_time = d2.getTime()
+                    var data = {
+                        state: self.state
+                    };
+                    if (confirm('是否提交答卷：“' + self.state.paper.name+'”')) {
+                        $('#vm_testing').hide()
+                        $('.commit_loading').show()
+                        self.items.forEach(function (i) {
+                            var pick ={
+                                item : i.id,
+                                user_answer : i.user_answer
+                            }
+                        self.results.push(pick)
+                    });
+                    self.state.results = self.results
+                    console.log(self.state)
+                    postJSON('/api/testing/commit', data, function (err, r) {
+                        $('.commit_loading').hide()
+                        if(r){
+                            location.assign(r.url)
+                        }
+                    });
+                }
+                },
+                previous: function () {
+                    if (this.index > 1) {
+                        this.index -= 1;
+                        this.item = this.items[this.index-1];
+                    }else return;
+                },
+                next: function () {
+                    if (this.index < this.items.length) {
+                          (this.index==0) ? this.index+=2 : this.index+=1;
+                          this.item = this.items[this.index-1];
+                      }else return;
+                  }
+                },
+                mounted: function () {
+                  if(this.items.length==0)
+                      location.assign('/error/notfond')
+                  this.item=this.items[0];
+                },
+                created: function () {
+                        var _this = this;
+                        var n_sec = 0;var n_min = 0;var n_hour = 0;
+                        setInterval(function () {
+                            str_sec=n_sec;str_min=n_min;str_hour=n_hour;
+                            if ( n_sec < 10) str_sec = "0" + n_sec;
+                            if ( n_min < 10 ) str_min = "0" + n_min;
+                            if ( n_hour < 10 ) str_hour = "0" + n_hour;
+                            for (var i = 0; i < _this.date.length; i++) {
+                                var time = str_hour + ":" + str_min + ":" + str_sec;
+                                Vue.set(_this.date[i],'time',time);
+                            }
+                            n_sec++;
+                            if (n_sec > 59){
+                                n_sec = 0;
+                                n_min++;
+                            }
+                            if (n_min > 59) {
+                                n_min = 0;
+                                n_hour++;
+                            }
+                        }, 1000)
+                }
+        });
+    }
+    $(function() {
+        getJSON('/api/item/'+ '{{ paper.id }}', {
+        }, function (err, results) {
+            if (err) {
+                return ;
+            }
+            initVM_papers(results);
+        });
+    });
+
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="mdl-grid">
+        <div class="commit_loading mdl-spinner mdl-js-spinner is-active" style="display: none"></div>
+        <span class="commit_loading mdl-card__title" style="display: none">
+            正在提交答卷,請稍等
+        </span>
+  <div class="items mdl-cell mdl-cell--12-col mdl-shadow--4dp" id="vm_testing">
+    <div class="paper_card">
+        <div class="mdl-card__media">
+            {% if paper.cover %}
+            <img src="{{ paper.cover }}">
+            {% else %}
+            <img src="/static/img/lab-flask-leaf.png">
+            {% endif %}
+        </div>
+        <div class="paper_title mdl-card__title">
+            <h2 class="mdl-card__title-text" v-text="state.paper.name"></h2>
+        </div>
+        <div class="paper_text mdl-card__subtitle-text">
+            第<span v-text="item.index"></span>题&nbsp;&nbsp;
+            已完成<span v-text="state.finish_items.length"></span>题&nbsp;&nbsp;
+            共<span v-text="items.length"></span>题</br>
+            跳至<div class="mdl-textfield mdl-js-textfield" style="max-width: 7%" v-on:keyup.enter="item_jump">
+                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="sample2">
+                    <span class="mdl-textfield__error">請輸入數字!</span>
+                </div>题</br>
+            已用时：<span v-for="l in date"><span v-text="l.time"></span></span></br></br>
+        </div>
+        <div class="paper_action mdl-card__subtitle-text">
+            <button class="mdl-button mdl-js-button" v-on:click="show_answer">
+                <i class="material-icons">playlist_add_check</i>显示答案
+            </button>
+            <!--<button class="mdl-button mdl-js-button">
+                <i class="material-icons">favorite_border</i>收藏此题
+            </button>-->
+            <button class="mdl-button mdl-js-button" v-on:click="commit_paper">
+                <i class="material-icons">done_all</i>提交答卷
+            </button>
+        </div>
+    </div>
+    <div>
+        <div class="mdl-card__title" style="min-width: 100%">
+          <span v-text="item.index"></span>.&nbsp;&nbsp;
+          <span v-text="item.answer_type"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+          已选：<span v-text="item.user_answer"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+          <span id="answer_box" style="min-width:30%;float:right;color:#ab47bc;display: none">
+              正确答案：<span v-text="item.answer"></span>
+          </span>
+        </div>
+        <div class="mdl-card__supporting-text">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span v-text="item.content"></span>
+        </div>
+        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+            <span v-for="(item, index) in _answer_list" v-on:click="check_item">
+                <label class="radio_lab">
+                    <input type="radio" name="gender"  v-bind:value="item.name" checked="false">
+                    <span v-text="item.name"></span>.
+                    <span v-text="item.value" class="radio__label"></span> <br>
+                </label>
+            </span>
+
+        </div>
+    </div>
+    <div class="arrow mdl-card__actions mdl-card--border">
+        <button class="mdl-button mdl-js-button" style="float:left;margin-bottom: 20px" v-on:click="previous">
+          <i class="material-icons">keyboard_arrow_left</i>
+          上一题
+        </button>
+        <button class="mdl-button mdl-js-button" style="float:right;margin-bottom: 20px" v-on:click="next">
+          <i class="material-icons">keyboard_arrow_right</i>
+          下一题
+        </button>
+    </div>
+  </div>
+</div>
+{% endblock %}

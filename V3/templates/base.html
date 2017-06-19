@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/material.css">
+    <script src="/static/js/material.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/material-icons.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <style>
+        body{
+            font-family:Microsoft YaHei;
+        }
+        a:link {
+            text-decoration: none;
+        }
+    </style>
+
+    {% block beforehead %}<!-- before head  -->{% endblock %}
+
+</head>
+
+<body class="components">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+          <!-- Title -->
+          <span class="mdl-layout-title">学习系统</span>
+          <!-- Add spacer, to align navigation to the right -->
+          <div class="mdl-layout-spacer"></div>
+          <!-- Navigation. We hide it in small screens. -->
+          <nav class="mdl-navigation mdl-layout--large-screen-only">
+            <a class="mdl-navigation__link mdl-color-text--white" href="/update"><i class="material-icons">update</i>更新</a>
+            <a class="mdl-navigation__link mdl-color-text--white" href=""><i class="material-icons">settings</i>设置</a>
+          </nav>
+        </div>
+      </header>
+      <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">分类</span>
+        <nav class="mdl-navigation">
+          {% for item in g.tags %}
+               <a class="mdl-navigation__link mdl-color-text--black" href="/papers/{{ item.id }}">{{ item.name }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+      <main class="mdl-layout__content">
+
+        {% block content %}
+
+        {% endblock %}
+
+      </main>
+    </div>
+</body>
+</html>
+
+<script>
+
+</script>

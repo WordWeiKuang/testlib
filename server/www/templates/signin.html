@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/material.css">
+    <script src="/static/js/material.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/material-icons.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/sha1.min.js"></script>
+<style>
+    body{
+        font-family:Microsoft YaHei;
+    }
+    .login_lab{
+        min-width: 100%;
+    }
+</style>
+</head>
+<body>
+    <div class="mdl-grid">
+    <section class="mdl-components__page mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet">
+            <div class="mdl-card__title" style="text-align: center">
+                <h3>欢迎使用学习系统</h3>
+            </div>
+        </div>
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet">
+            <form @submit.prevent="submit" method="post" id="vm">
+                <span class="mdl-card__subtitle-text">请登录</span>
+                <div class="login_lab">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input v-model="name" class="mdl-textfield__input" type="text" id="sample1" name="name">
+                        <label class="mdl-textfield__label" for="sample1">用户名</label>
+                    </div>
+                </div>
+                <div class="login_lab">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input v-model="passwd" class="mdl-textfield__input" type="password" id="sample2" name="passwd">
+                        <label class="mdl-textfield__label" for="sample1">密码</label>
+                    </div>
+                </div>
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">提交</button>
+            </form>
+            <div class="error mdl-color-text--pink-500">
+                  {% if error %}{{ error }}{% endif %}
+            </div>
+        </div>
+    </section>
+    </div>
+<script>
+
+$(function() {
+    var vmAuth = new Vue({
+        el: '#vm',
+        data: {
+            name: '',
+            passwd: ''
+        },
+        methods: {
+            submit: function(event) {
+                console.log('true')
+                event.preventDefault();
+                var
+                    $form = $('#vm'),
+                    data = {
+                        name: this.name,
+                        passwd: this.passwd==='' ? '' : CryptoJS.SHA1(this.name + ':' + this.passwd).toString()
+                    };
+                $form.postJSON('/api/authenticate', data, function(err, result) {
+                    if (! err) {
+                        location.assign('/');
+                    }
+                });
+            }
+        }
+    });
+});
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% extends '__manage_layout__.html' %}
+
+{% block beforehead %}
+<style>
+    .edit{
+        width: 100%;
+    }
+    .imgbox{
+        max-width: 30%;
+        height: 100%;
+        float: left;
+        margin-right: 10%;
+        padding: 10px;
+    }
+    .mdl-card__media > img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    .input{
+        width: 90%;
+    }
+    .edit_title{
+        float: left;
+        width: 60%;
+    }
+    .edit_text{
+        float: left;
+        width: 60%;
+    }
+    .edit_button{
+        margin-bottom: 10px;
+        float: left;
+        width: 60%;
+    }
+</style>
+
+<script>
+
+var
+    ID = '{{ id }}',
+    action = '{{ action }}';
+
+function initVM(tag) {
+    var vm = new Vue({
+        el: '#vm',
+        data: tag,
+        methods: {
+            submit: function (event) {
+                event.preventDefault();
+                var $form = $('#vm').find('form');
+                $form.postJSON(action, this.$data, function (err, r) {
+                    if (err) {
+                    //    $form.showFormError(err);
+                    }
+                    else {
+                        return location.assign('/manage/tags');
+                    }
+                });
+            }
+        }
+    });
+}
+
+$(function () {
+    if (ID) {
+        getJSON('/api/tag/' + ID, function (err, tag) {
+            if (err) {
+                //return fatal(err);
+            }
+            initVM(tag);
+        });
+    }
+    else {
+        initVM({
+            name: '',
+            brief: ''
+        });
+    }
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="mdl-grid demo-content">
+        <div class="mdl-cell mdl-cell--12-col mdl-grid" id="vm">
+            <form @submit.prevent="submit" class="edit mdl-shadow--6dp">
+                <div class="imgbox mdl-card__media mdl-shadow--2dp">
+                    <img src="/static/img/lab-flask-leaf.png">
+                </div>
+                <div class="edit_title">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <span class="mdl-card__subtitle-text">标签名称</span>
+                        <input v-model="name" class="input mdl-textfield__input" type="text" id="sample3">
+                        <!--<label class="mdl-textfield__label" for="sample3">标签名称...</label>-->
+                    </div>
+                </div>
+                <div class="edit_text">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <span class="mdl-card__subtitle-text">标签简介</span>
+                        <textarea  v-model="brief" class="input mdl-textfield__input" type="text" rows= "3" id="sample5" ></textarea>
+                        <!--<label class="mdl-textfield__label" for="sample5">标签简介...</label>-->
+                    </div>
+                </div>
+                <div class="edit_button">
+                     <a href="/manage/tags" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"><!--<i class="material-icons">cancel</i>-->取消</a>
+                     <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="width: 96px"><!--<i class="material-icons">save</i>-->保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

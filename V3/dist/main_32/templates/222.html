@@ -1,0 +1,103 @@
+<script>
+    var vm = new Vue({
+            el: '#vm_papers',
+            data: {
+                papers: []
+            },
+            mounted: function () {
+                getJSON('/api/papers/'+ '{{ tag.id }}', {
+                        }, function (err, results) {
+                            if (err) {
+                                return fatal(err);
+                            }
+                            this.papers = results.papers;
+                            console.log(this.papers)
+                        });
+            },
+        });
+
+</script>
+
+
+
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/material.css">
+
+    <script src="/static/js/material.min.js"></script>
+    <link rel="stylesheet" href="/static/iconfont/material-icons.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    <script src="/static/js/vue.js"></script>
+
+    {% block beforehead %}<!-- before head  -->{% endblock %}
+
+<script>
+    function initVM(data) {
+        var vm = new Vue({
+            el: '#vm',
+            data: {
+                tags: data.tags
+            }
+        });
+    }
+    $(function() {
+        getJSON('/api/tags', {
+            //page: {{ page_index }}
+        }, function (err, results) {
+            if (err) {
+                return fatal(err);
+            }
+            $('#loading').hide();
+            initVM(results);
+        });
+    });
+</script>
+</head>
+
+<body class="components">
+
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
+            mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-spinner mdl-js-spinner is-active" id="loading"></div>
+    <div class="mdl-layout__header-row">
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+        <label class="mdl-button mdl-js-button mdl-button--icon"
+               for="fixed-header-drawer-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="sample"
+                 id="fixed-header-drawer-exp">
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer" id="vm">
+      <span class="mdl-layout-title" href="/">分类</span>
+
+    <nav class="mdl-navigation" v-for="tag in tags">
+      <a class="mdl-navigation__link" v-text="tag.name" v-bind:href="'/papers/'+tag.id"></a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content">
+
+    {% block content %}
+
+    {% endblock %}
+
+  </main>
+
+</div>
+
+</body>
+</html>

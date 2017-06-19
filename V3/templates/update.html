@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+    <link rel="stylesheet" href="/static/css/vue-material.css">
+    <script src="/static/js/vue-material.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <style>
+        body{
+            font-family:Microsoft YaHei;
+        }
+        a:link {
+            text-decoration: none;
+        }
+        .update-lis{
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="mdl-grid" id="vm">
+    <div class="update-lis">
+        <md-card md-with-hover>
+          <md-card-header>
+            <div class="md-title">更新数据</div>
+            <div class="md-subhead">获取来自服务器的新数据</div>
+          </md-card-header>
+
+          <md-card-content class="md-warn">
+            这将会产生流量消耗，可能会修改本地的试题
+          </md-card-content>
+
+          <md-card-actions>
+            <md-button class="md-primary" @click.native="update">更新</md-button>
+            <md-button class="md-warn" href="/">取消</md-button>
+          </md-card-actions>
+        </md-card>
+    </div>
+    <div class="update-lis" id="loading" >
+        <md-spinner :md-size="150" md-indeterminate></md-spinner>
+    </div>
+</div>
+
+<script>
+     $('#loading').hide();
+    Vue.use(VueMaterial)
+    Vue.material.registerTheme('default', {
+      primary: 'blue',
+      warn: 'red',
+    })
+    var VM = new Vue({
+        el: '#vm',
+    data:{
+        paper_id:'',
+        papers:[]
+    },
+    beforeCreate(){
+        $('#loading').hide();
+    },
+    created(){
+    },
+    methods: {
+        update:function () {
+            axios.get('http://127.0.0.1:9000/api/update')
+              .then(function (response) {
+                  console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+            });
+        }
+    }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends '__manage_layout__.html' %}
+
+{% block beforehead %}
+    <link rel="stylesheet" href="/static/css/vue-material.css">
+    <script src="/static/js/vue-material.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+<style>
+.item_edit{
+    width:100%;
+}
+.anstype-warn{
+    color:green;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="mdl-grid demo-content" id="vm_item_edit">
+        <form @submit.prevent="submit" class="mdl-cell mdl-cell--12-col mdl-grid">
+            <div class="item_edit">
+                <md-card>
+                  <md-card-header>
+                    <md-card-header-text>
+                      <div class="md-title">添加题目</div>
+                      <div class="md-subhead">请输入题目信息...</div>
+                      <md-input-container>
+                        <label for="movie">题目类型</label>
+                        <md-select name="answer_type" id="answer_type" v-model="answer_type">
+                          <md-option value="选择题">选择题</md-option>
+                          <md-option value="判断题">判断题</md-option>
+                        </md-select>
+                      </md-input-container>
+                      <md-input-container>
+                        <label for="movie">所属试卷</label>
+                        <md-select name="paper_id" id="paper_id" v-model="paper_id">
+                          <span v-for="item in papers">
+                              <md-option v-bind:value="item.id"><span v-text="item.name"></span></md-option>
+                          </span>
+                        </md-select>
+                      </md-input-container>
+                      <md-input-container>
+                        <label>问题内容：(描述问题)</label>
+                        <md-textarea v-model="content"></md-textarea>
+                      </md-input-container>
+                      <span v-if="answer_type=='判断题'" class="anstype-warn">A表示正确，B表示错误</span>
+                      <md-input-container>
+                        <label for="movie">正确答案：</label>
+                        <md-select name="answer" id="answer" v-model="answer">
+                          <md-option value="A">A</md-option>
+                          <md-option value="B">B</md-option>
+                          <md-option v-if="answer_type=='选择题'" value="C">C</md-option>
+                          <md-option v-if="answer_type=='选择题'" value="D">D</md-option>
+                        </md-select>
+                      </md-input-container>
+                      <div v-if="answer_type=='选择题'" >
+                          <md-input-container>
+                          <label>选项A</label>
+                          <md-input v-model="answer_A"></md-input>
+                          </md-input-container>
+                          <md-input-container>
+                          <label>选项B</label>
+                          <md-input v-model="answer_B"></md-input>
+                          </md-input-container>
+                          <md-input-container >
+                          <label>选项C</label>
+                          <md-input v-model="answer_C"></md-input>
+                          </md-input-container>
+                          <md-input-container>
+                          <label>选项D</label>
+                          <md-input v-model="answer_D"></md-input>
+                          </md-input-container>
+                      </div>
+                      
+                    </md-card-header-text>
+                  </md-card-header>
+
+                  <md-card-actions>
+                    <md-button v-bind:href="'/manage/items?paper_id='+paper_id" class="md-warn">取消</md-button>
+                    <md-button type="submit"  class="md-primary">保存</md-button>
+                  </md-card-actions>
+                </md-card>
+            </div>
+        </form>
+    </div>
+<script>
+var
+    ID = '{{ id }}',
+    action = '{{ action }}';
+    PAPER_ID= '{{ paper_id }}'
+    console.log(PAPER_ID);
+Vue.use(VueMaterial)
+Vue.material.registerTheme('default', {
+  primary: 'blue',
+  accent: 'red',
+  warn: 'red',
+})
+var VmItemEdit = new Vue({
+    el: '#vm_item_edit',
+    data:{
+        paper_id:'',
+        papers:[],
+        answer_type:'选择题',
+        content:'',
+        answer:'',
+        answer_list:'',
+        answer_A:'',
+        answer_B:'',
+        answer_C:'',
+        answer_D:''
+    },
+    created(){
+        let self = this;
+        if(ID){
+            axios.get('/api/item/'+ID)
+              .then(function (response) {
+                  let item = response.data
+                  self.paper_id = item.paper;
+                  self.answer_type = item.answer_type;
+                  self.content = item.content;
+                  self.answer = item.answer;
+                  self.answer_A = item.answer_A;
+                  self.answer_B = item.answer_B;
+                  self.answer_C = item.answer_C;
+                  self.answer_D = item.answer_D;
+              })
+              .catch(function (error) {
+                console.log(error);
+            });
+        }
+        if(PAPER_ID){self.paper_id = PAPER_ID}
+        axios.get('/api/get_papers')
+            .then(function (response) {
+                self.papers = response.data.papers
+            })
+            .catch(function (error) {
+                console.log(error);
+        });
+    },
+    methods: {
+            submit: function () {
+                    let self = this;
+                    axios.post(action,{
+                            answer_type:self.answer_type,
+                            content:self.content,
+                            answer:self.answer,
+                            paper_id:self.paper_id,
+                            answer_A:self.answer_A,
+                            answer_B:self.answer_B,
+                            answer_C:self.answer_C,
+                            answer_D:self.answer_D
+                     })
+                    .then(function (response) {
+                       return location.assign('/manage/items?paper_id='+self.paper_id);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+               });
+             }
+    }
+    
+});
+
+</script>
+
+{% endblock %}

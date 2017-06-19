@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block beforehead %}
+<style>
+    .res-list{
+        padding-left: 10%;
+    }
+    .res-items{
+    }
+    .res-items-ans{
+        margin-right: 7%;
+    }
+</style>
+
+<script>
+function initVM_res(data) {
+    var vm = new Vue({
+        el: '#vm_res',
+        data: {
+            state: data.state,
+            paper: data.state.paper,
+        },
+        methods: {
+        },
+        mounted: function () {
+            self = this
+        },
+        computed: {
+        }
+    });
+}
+
+$(function() {
+    getJSON('/api/results/{{ paper_id }}', function (err, results) {
+        if (err) {
+
+        }
+        console.log(results);
+        initVM_res(results);
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="mdl-grid" id="vm_res">
+    <div class="res-list mdl-cell mdl-cell--12-col">
+        <div class="docs-text-styling component-title">
+          <h3>測試結果</h3>
+            <h5>試卷名稱：<span v-text="paper.name"></span></h5>
+        </div>
+        <ul class="demo-list-item mdl-list toc">
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons">assignment_turned_in</i>
+                題目總數: <span v-text="paper.munber"></span>
+            </span>
+          </li>
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons">assignment_turned_in</i>
+                正確: <span v-text="state.true_items.length"></span>
+            </span>
+          </li>
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons">assignment_late</i>
+                錯誤: <span v-text="state.false_items.length"></span>
+            </span>
+          </li>
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons">block</i>
+                未答： <span v-text="state.unfinish_items.length"></span>
+            </span>
+          </li>
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons">content_paste</i>
+                總分: <span v-text="paper.total"></span>，  得分: <span v-text="state.score"></span>
+            </span>
+          </li>
+        </ul>
+    </div>
+
+    <div class="res-items mdl-cell mdl-cell--12-col">
+        <h3>未答</h3>
+        <div class="mdl-card__actions mdl-card--border" v-for="item in state.unfinish_items">
+            <div class="mdl-color-text--grey-500">
+                第<span v-text="item.index"></span>題  <span v-text="item.answer_type"></span>
+            </div>
+            <div class="mdl-color-text--pink-500">
+                正確答案： <span v-text="item.answer"></span>
+            </div>
+            <p>
+                <span v-text="item.content"></span>
+            </p>
+            <span class="res-items-ans">A.<span v-text="item.answer_A"></span></span>
+            <span class="res-items-ans">B.<span v-text="item.answer_B"></span></span>
+            <span class="res-items-ans">C.<span v-text="item.answer_C"></span></span>
+            <span class="res-items-ans">D.<span v-text="item.answer_D"></span></span>
+        </div>
+
+        <h3>錯題集</h3>
+        <div class="mdl-card__actions mdl-card--border" v-for="item in state.false_items">
+            <div class="mdl-color-text--grey-500">
+                第<span v-text="item.index"></span>題 <span v-text="item.answer_type"></span>  已選：<span v-text="item.user_answer"></span>
+            </div>
+            <div class="mdl-color-text--pink-500">
+                正確答案： <span v-text="item.answer"></span>
+            </div>
+            <p>
+                <span v-text="item.content"></span>
+            </p>
+            <span class="res-items-ans">A.<span v-text="item.answer_A"></span></span>
+            <span class="res-items-ans">B.<span v-text="item.answer_B"></span></span>
+            <span class="res-items-ans">C.<span v-text="item.answer_C"></span></span>
+            <span class="res-items-ans">D.<span v-text="item.answer_D"></span></span>
+        </div>
+</div>
+{% endblock %}
